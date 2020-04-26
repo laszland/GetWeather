@@ -11,16 +11,25 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, 
       { day: 'friday', temp: 18, description: 'rainy', key: '5' }
     ]);
 
-    const [modalToggle, setModalToggle] = useState(true);
+    const [modalOpen, setModalOpen] = useState(true);
 
     const closeModal = () => {
-      setModalToggle(false);
+      setModalOpen(false);
+    }
+
+    const openModal = () => {
+      setModalOpen(true)
     }
 
     return (
     <View style={styles.homeContainer}>
 
-      <Modal visible={modalToggle}>
+      <Button
+        title='open'
+        onPress={openModal}
+      />
+
+      <Modal visible={modalOpen}>
         <Text style={styles.cardTitle}>This is your modal</Text>
         <Button
           title='close'
