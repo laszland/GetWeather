@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
   
   export default function Home({ navigation }) {
 
@@ -11,8 +11,23 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity } from '
       { day: 'friday', temp: 18, description: 'rainy', key: '5' }
     ]);
 
+    const [modalToggle, setModalToggle] = useState(true);
+
+    const closeModal = () => {
+      setModalToggle(false);
+    }
+
     return (
     <View style={styles.homeContainer}>
+
+      <Modal visible={modalToggle}>
+        <Text style={styles.cardTitle}>This is your modal</Text>
+        <Button
+          title='close'
+          onPress={closeModal}
+        />
+      </Modal>
+
       <FlatList
         data={data}
         style={styles.list}
