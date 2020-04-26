@@ -1,26 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity } from 'react-native';
-
-const data = [
-  { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
-  { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
-  { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
-  { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
-  { day: 'friday', temp: 18, description: 'rainy', key: '5' }];
-
   
   export default function Home({ navigation }) {
 
-    const pressHandler = () => {
-      navigation.push('DayDetails');
-    }
+    const [data, setData] = useState([
+      { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
+      { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
+      { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
+      { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
+      { day: 'friday', temp: 18, description: 'rainy', key: '5' }
+    ]);
+
     return (
     <View style={styles.homeContainer}>
       <FlatList
         data={data}
         style={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={pressHandler}>
+          <TouchableOpacity onPress={() => navigation.navigate('DayDetails', item)}>
             <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>{item.day}</Text>
               <Text>{item.temp} ºC</Text>
