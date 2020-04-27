@@ -1,5 +1,18 @@
 import React from 'react'
-import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button, TextInput, AsyncStorage } from 'react-native';
+import { StyleSheet,
+         View,
+         Text,
+         Dimensions,
+         FlatList,
+         TouchableOpacity,
+         Modal,
+         Button,
+         TextInput,
+         AsyncStorage,
+         ScrollView } from 'react-native';
+import { API_KEY } from '../api_key';
+import { GoogleAutoComplete } from 'react-native-google-autocomplete';
+import LocationItem from '../components/locationItem'; 
 
 export default class Home extends React.Component {
 
@@ -56,15 +69,33 @@ export default class Home extends React.Component {
             />
       
             <Modal visible={this.state.modalOpen}>
-              <TextInput
-                placeholder='Type your city'
-                onChangeText={text => this.setState({ 'city': text })}
-                defaultValue={this.state.city}
-              />
-              <Button
-                title='close'
-                onPress={this.closeModal}
-              />
+              <GoogleAutoComplete apiKey='AIzaSyBc7r7mR9IMHgNRhP_znla8Llij3IEOfmI' debounce={500} minLength={3} >
+                {({ locationResults }) => (
+                  <React.Fragment>
+                    { console.log('location result:', locationResults) }
+                     <TextInput
+                      placeholder='Type your city'
+                      onChangeText={text => this.setState({ 'city': text })}
+                      defaultValue={this.state.city}
+                      style={styles.inputField}
+                    />
+                    <Button
+                      title='close'
+                      onPress={this.closeModal}
+                    />
+
+                    <ScrollView>
+                      {locationResults.map(el => (
+                        <LocationItem 
+                          {...el}
+                          key={el.id}
+                          
+                        />
+                      ))}
+                    </ScrollView>
+                  </ React.Fragment>
+                )}
+              </GoogleAutoComplete>
             </Modal>
       
             <Text style={styles.cardTitle}>{this.state.city}</Text>
@@ -112,5 +143,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+  inputField: {
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: 'blue',
+    paddingHorizontal: 16,
+    marginTop: 60,
   }
 });
