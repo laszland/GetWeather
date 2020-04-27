@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button, TextInput } from 'react-native';
-  
-  export default function Home({ navigation }) {
+import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button, TextInput, AsyncStorage } from 'react-native';
+
+export default function Home({ navigation }) {
 
     const [data, setData] = useState([
       { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
@@ -14,8 +14,12 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, 
     const [modalOpen, setModalOpen] = useState(true);
     const [city, setCity] = useState('')
 
-    const closeModal = () => {
-      console.log(city)
+    const closeModal = async (value) => {
+      try {
+        await AsyncStorage.setItem('city', value)
+      } catch (e) {
+        console.log(e)
+      }
       setModalOpen(false);
     }
 
@@ -39,11 +43,17 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, 
         />
         <Button
           title='close'
-          onPress={closeModal}
+          onPress={closeModal(city)}
         />
       </Modal>
 
-      <Text style={styles.cardTitle}>{city}</Text>
+      <Text style={styles.cardTitle}>{async () => {
+        try {
+          AsyncStorage.getItem('city');
+        } catch(err) {
+          console.log(err);
+        }
+      }}</Text>
 
       <FlatList
         data={data}
