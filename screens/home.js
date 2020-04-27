@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button, TextInput } from 'react-native';
   
   export default function Home({ navigation }) {
 
@@ -12,8 +12,10 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, 
     ]);
 
     const [modalOpen, setModalOpen] = useState(true);
+    const [city, setCity] = useState('')
 
     const closeModal = () => {
+      console.log(city)
       setModalOpen(false);
     }
 
@@ -30,12 +32,18 @@ import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, 
       />
 
       <Modal visible={modalOpen}>
-        <Text style={styles.cardTitle}>This is your modal</Text>
+        <TextInput
+          placeholder='Type your city'
+          onChangeText={text => setCity(text)}
+          defaultValue={city}
+        />
         <Button
           title='close'
           onPress={closeModal}
         />
       </Modal>
+
+      <Text style={styles.cardTitle}>{city}</Text>
 
       <FlatList
         data={data}
