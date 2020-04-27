@@ -14,7 +14,7 @@ export default class Home extends React.Component {
           { day: 'friday', temp: 18, description: 'rainy', key: '5' }
         ],
         city: '',
-        modalOpen: true
+        modalOpen: false
       }
       this.getCity()
     }
@@ -34,6 +34,8 @@ export default class Home extends React.Component {
         const value = await AsyncStorage.getItem('city');
         if (value !== null) {
           this.setState({ city: value })
+        } else {
+          this.setState({ modalOpen: true })
         }
       } catch(err) {
         console.log(err);
