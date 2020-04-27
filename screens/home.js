@@ -1,75 +1,88 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StyleSheet, View, Text, Dimensions, FlatList, TouchableOpacity, Modal, Button, TextInput, AsyncStorage } from 'react-native';
 
-export default function Home({ navigation }) {
+export default class Home extends React.Component {
 
-    const [data, setData] = useState([
-      { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
-      { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
-      { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
-      { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
-      { day: 'friday', temp: 18, description: 'rainy', key: '5' }
-    ]);
-
-    const [modalOpen, setModalOpen] = useState(true);
-    const [city, setCity] = useState('')
-
-    const closeModal = async (value) => {
-      try {
-        await AsyncStorage.setItem('city', value)
-      } catch (e) {
-        console.log(e)
+    constructor (props) {
+      super(props);
+      this.state = {
+        data: [
+          { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
+          { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
+          { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
+          { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
+          { day: 'friday', temp: 18, description: 'rainy', key: '5' }
+        ],
+        city: '',
+        modalOpen: true
       }
-      setModalOpen(false);
+      this.getCity()
     }
 
-    const openModal = () => {
-      setModalOpen(true)
-    }
+    closeModal = async () => {
+      try {
+        await AsyncStorage.setItem('city', this.state.city)
+        this.setState({ modalOpen: false });
+      } catch(err) {
+        console.log(err);
+      }
+    };
 
-    return (
-    <View style={styles.homeContainer}>
 
-      <Button
-        title='open'
-        onPress={openModal}
-      />
-
-      <Modal visible={modalOpen}>
-        <TextInput
-          placeholder='Type your city'
-          onChangeText={text => setCity(text)}
-          defaultValue={city}
-        />
-        <Button
-          title='close'
-          onPress={closeModal(city)}
-        />
-      </Modal>
-
-      <Text style={styles.cardTitle}>{async () => {
-        try {
-          AsyncStorage.getItem('city');
-        } catch(err) {
-          console.log(err);
+    getCity = async () => {
+      try {
+        const value = await AsyncStorage.getItem('city');
+        if (value !== null) {
+          this.setState({ city: value })
         }
-      }}</Text>
+      } catch(err) {
+        console.log(err);
+      }
+    }
 
-      <FlatList
-        data={data}
-        style={styles.list}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => navigation.navigate('DayDetails', item)}>
-            <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{item.day}</Text>
-              <Text>{item.temp} ºC</Text>
-              <Text>{item.description}</Text>
-            </View>
-          </TouchableOpacity >
-        )}
-      />
-    </View>
-  )
+    openModal = () => {
+      this.setState({ modalOpen: true })
+    }
+
+    render() {
+        return (
+          <View style={styles.homeContainer}>
+      
+            <Button
+              title='open'
+              onPress={this.openModal}
+            />
+      
+            <Modal visible={this.state.modalOpen}>
+              <TextInput
+                placeholder='Type your city'
+                onChangeText={text => this.setState({ 'city': text })}
+                defaultValue={this.state.city}
+              />
+              <Button
+                title='close'
+                onPress={this.closeModal}
+              />
+            </Modal>
+      
+            <Text style={styles.cardTitle}>{this.state.city}</Text>
+      
+            <FlatList
+              data={this.state.data}
+              style={styles.list}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('DayDetails', item)}>
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>{item.day}</Text>
+                    <Text>{item.temp} ºC</Text>
+                    <Text>{item.description}</Text>
+                  </View>
+                </TouchableOpacity >
+              )}
+            />
+          </View>
+      )
+    }
 }
 
 const styles = StyleSheet.create({
