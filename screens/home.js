@@ -26,26 +26,32 @@ export default class Home extends React.Component {
           { day: 'friday', temp: 18, description: 'rainy', key: '5' }
         ],
         city: '',
+        lat: 0,
+        lng: 0,
         modalOpen: false
       }
       this.getCity()
     }
 
     closeModal = async () => {
+      console.log(this.state);
+      const city = ['city', this.state.city];
+      const lat = ['lat', this.state.lat.toString()];
+      const lng = ['lng', this.state.lng.toString()];
       try {
-        await AsyncStorage.setItem('city', this.state.city)
-        this.setState({ modalOpen: false });
+        await AsyncStorage.multiSet([city, lat, lng]);
       } catch(err) {
         console.log(err);
       }
+      this.setState({ modalOpen: false });
     };
 
 
     getCity = async () => {
       try {
-        const value = await AsyncStorage.getItem('city');
+        const value = await AsyncStorage.multiGet(['city', 'lat', 'lng']);
         if (value !== null) {
-          this.setState({ city: value })
+          this.setState({ city: value[0][1], lat: parseFloat(value[1][1]), lng: parseFloat(value[2][1]) });
         } else {
           this.setState({ modalOpen: true })
         }
@@ -73,9 +79,8 @@ export default class Home extends React.Component {
                                   minLength={3}
                                   queryTypes='(cities)'
                                   >
-                {({ handleTextChange, locationResults, inputValue }) => (
+                {({ handleTextChange, locationResults, fetchDetails }) => (
                   <React.Fragment>
-                    { console.log('location result:', locationResults) }
                      <TextInput
                       placeholder='Type your city'
                       onChangeText={text => {
@@ -93,7 +98,12 @@ export default class Home extends React.Component {
 
                     <ScrollView>
                       {locationResults.map(el => (
-                        <TouchableOpacity onPress={() => this.setState({ 'city': el.description })} key={el.id}>
+                        <TouchableOpacity onPress={async () => {
+                            this.setState({ 'city': el.description });
+                            const locationDetails = await fetchDetails(el.place_id);
+                            console.log(locationDetails);
+                            this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
+                            }} key={el.id}>
                           <LocationItem 
                             {...el}
                           />
@@ -106,6 +116,7 @@ export default class Home extends React.Component {
             </Modal>
       
             <Text style={styles.cardTitle}>{this.state.city}</Text>
+            <Text style={styles.cardTitle}> coordinates: {this.state.lat}; {this.state.lng} </Text>
       
             <FlatList
               data={this.state.data}
