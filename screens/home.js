@@ -73,14 +73,18 @@ export default class Home extends React.Component {
                                   minLength={3}
                                   queryTypes='(cities)'
                                   >
-                {({ handleTextChange, locationResults }) => (
+                {({ handleTextChange, locationResults, inputValue }) => (
                   <React.Fragment>
                     { console.log('location result:', locationResults) }
                      <TextInput
                       placeholder='Type your city'
-                      onChangeText={handleTextChange}
+                      onChangeText={text => {
+                        this.setState({'city': text}),
+                        handleTextChange(text)
+                      }}
                       defaultValue={this.state.city}
                       style={styles.inputField}
+                      value={this.state.city}
                     />
                     <Button
                       title='close'
@@ -89,11 +93,11 @@ export default class Home extends React.Component {
 
                     <ScrollView>
                       {locationResults.map(el => (
-                        <LocationItem 
-                          {...el}
-                          key={el.id}
-                          
-                        />
+                        <TouchableOpacity onPress={() => this.setState({ 'city': el.description })} key={el.id}>
+                          <LocationItem 
+                            {...el}
+                          />
+                        </TouchableOpacity>
                       ))}
                     </ScrollView>
                   </ React.Fragment>
