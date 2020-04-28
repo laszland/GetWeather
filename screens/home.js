@@ -10,7 +10,6 @@ import { StyleSheet,
          TextInput,
          AsyncStorage,
          ScrollView } from 'react-native';
-import { API_KEY } from '../api_key';
 import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import LocationItem from '../components/locationItem'; 
 
@@ -69,13 +68,17 @@ export default class Home extends React.Component {
             />
       
             <Modal visible={this.state.modalOpen}>
-              <GoogleAutoComplete apiKey='AIzaSyBc7r7mR9IMHgNRhP_znla8Llij3IEOfmI' debounce={500} minLength={3} >
-                {({ locationResults }) => (
+              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs'
+                                  debounce={500}
+                                  minLength={3}
+                                  queryTypes='(cities)'
+                                  >
+                {({ handleTextChange, locationResults }) => (
                   <React.Fragment>
                     { console.log('location result:', locationResults) }
                      <TextInput
                       placeholder='Type your city'
-                      onChangeText={text => this.setState({ 'city': text })}
+                      onChangeText={handleTextChange}
                       defaultValue={this.state.city}
                       style={styles.inputField}
                     />
