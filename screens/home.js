@@ -11,61 +11,71 @@ import { StyleSheet,
          AsyncStorage,
          ScrollView } from 'react-native';
 import { GoogleAutoComplete } from 'react-native-google-autocomplete';
-import LocationItem from '../components/locationItem'; 
+import LocationItem from '../components/locationItem';
+import { getWeatherData } from '../services/weatherData';
+
 
 export default class Home extends React.Component {
-
-    constructor (props) {
-      super(props);
-      this.state = {
-        data: [
-          { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
-          { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
-          { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
-          { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
-          { day: 'friday', temp: 18, description: 'rainy', key: '5' }
-        ],
-        city: '',
-        lat: 0,
-        lng: 0,
-        modalOpen: false
-      }
-      this.getCity()
+  
+  constructor (props) {
+    super(props);
+    this.state = {
+      data: [
+        { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
+        { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
+        { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
+        { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
+        { day: 'friday', temp: 18, description: 'rainy', key: '5' }
+      ],
+      city: '',
+      lat: 0,
+      lng: 0,
+      modalOpen: false,
+      weatherData: {}
     }
-
-    closeModal = async () => {
-      console.log(this.state);
-      const city = ['city', this.state.city];
-      const lat = ['lat', this.state.lat.toString()];
-      const lng = ['lng', this.state.lng.toString()];
-      try {
-        await AsyncStorage.multiSet([city, lat, lng]);
-      } catch(err) {
-        console.log(err);
-      }
-      this.setState({ modalOpen: false });
-    };
-
-
-    getCity = async () => {
-      try {
-        const value = await AsyncStorage.multiGet(['city', 'lat', 'lng']);
-        if (value !== null) {
-          this.setState({ city: value[0][1], lat: parseFloat(value[1][1]), lng: parseFloat(value[2][1]) });
-        } else {
-          this.setState({ modalOpen: true })
-        }
-      } catch(err) {
-        console.log(err);
-      }
+    this.getCityAndCoordinates()
+    getWeatherData(this.state.lat, this.state.lng)
+      .then(data => {
+        this.setState({ weatherData: data })
+        console.log(this.state);
+      });
+  }
+  
+  
+  closeModal = async () => {
+    const city = ['city', this.state.city];
+    const lat = ['lat', this.state.lat.toString()];
+    const lng = ['lng', this.state.lng.toString()];
+    try {
+      await AsyncStorage.multiSet([city, lat, lng]);
+    } catch(err) {
+      console.error(err);
     }
-
-    openModal = () => {
-      this.setState({ modalOpen: true })
+    this.setState({ modalOpen: false });
+  };
+  
+  
+  getCityAndCoordinates = async () => {
+    try {
+      const value = await AsyncStorage.multiGet(['city', 'lat', 'lng']);
+      if (value !== null) {
+        this.setState({ city: value[0][1], lat: parseFloat(value[1][1]), lng: parseFloat(value[2][1]) });
+      } else {
+        this.setState({ modalOpen: true })
+      }
+    } catch(err) {
+      console.error(err);
     }
+  }
+  
+  openModal = () => {
+    this.setState({ modalOpen: true })
+  }
 
-    render() {
-        return (
+  
+  render() {
+    
+    return (
           <View style={styles.homeContainer}>
       
             <Button
@@ -74,7 +84,7 @@ export default class Home extends React.Component {
             />
       
             <Modal visible={this.state.modalOpen}>
-              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs'
+              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
                                   debounce={500}
                                   minLength={3}
                                   queryTypes='(cities)'
