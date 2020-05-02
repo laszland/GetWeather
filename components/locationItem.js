@@ -6,7 +6,8 @@ export default class LocationItem extends PureComponent{
   render() {
     return (
       <View style={styles.root}>
-        <Text>{this.props.description}</Text>
+        <Text style={styles.text}>{this.props.description}</Text>
+        <View style={styles.bottomLine}></View>
       </View>
     )
   }
@@ -15,7 +16,22 @@ export default class LocationItem extends PureComponent{
 const styles = StyleSheet.create({
   root: {
     height: 40,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text: {
+    fontFamily: 'nunito-regular',
+    color: '#494949',
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: 'normal',
+    paddingLeft: 12,
+    alignSelf: 'flex-start'
+  },
+  bottomLine: {
+    width: 206,
+    height: 0,
+    borderBottomWidth: 0.5,
+    marginTop: 10,
   }
 })

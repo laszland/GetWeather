@@ -9,7 +9,8 @@ import { StyleSheet,
          Button,
          TextInput,
          AsyncStorage,
-         ScrollView } from 'react-native';
+         ScrollView,
+         ImageBackground } from 'react-native';
 import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import LocationItem from '../components/locationItem';
 import { getWeatherData } from '../services/weatherData';
@@ -48,10 +49,11 @@ export default class Home extends React.Component {
     const lng = ['lng', this.state.lng.toString()];
     try {
       await AsyncStorage.multiSet([city, lat, lng]);
+      const weatherData = await getWeatherData(this.state.lat, this.state.lng);
+      this.setState({ modalOpen: false, weatherData });
     } catch(err) {
       console.error(err);
     }
-    this.setState({ modalOpen: false });
   };
   
   
@@ -84,45 +86,52 @@ export default class Home extends React.Component {
             />
       
             <Modal visible={this.state.modalOpen}>
-              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
-                                  debounce={500}
-                                  minLength={3}
-                                  queryTypes='(cities)'
-                                  >
-                {({ handleTextChange, locationResults, fetchDetails }) => (
-                  <React.Fragment>
-                     <TextInput
-                      placeholder='Type your city'
-                      onChangeText={text => {
-                        this.setState({'city': text}),
-                        handleTextChange(text)
-                      }}
-                      defaultValue={this.state.city}
-                      style={styles.inputField}
-                      value={this.state.city}
-                    />
-                    <Button
-                      title='close'
-                      onPress={this.closeModal}
-                    />
+                <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
+                                    debounce={500}
+                                    minLength={3}
+                                    queryTypes='(cities)'
+                                    >
+                  {({ handleTextChange, locationResults, fetchDetails }) => (
+                    <React.Fragment>
+                      <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
+                        <TextInput
+                          placeholder='type your location'
+                          onChangeText={text => {
+                            this.setState({'city': text}),
+                            handleTextChange(text)
+                          }}
+                          defaultValue={this.state.city}
+                          style={styles.inputField}
+                          value={this.state.city}
+                        />
 
-                    <ScrollView>
-                      {locationResults.map(el => (
-                        <TouchableOpacity onPress={async () => {
-                            this.setState({ 'city': el.description });
-                            const locationDetails = await fetchDetails(el.place_id);
-                            console.log(locationDetails);
-                            this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
-                            }} key={el.id}>
-                          <LocationItem 
-                            {...el}
+                        <View style={styles.searchResultContainer}>
+                          <ScrollView>
+                            {locationResults.map(el => (
+                              <TouchableOpacity onPress={async () => {
+                                this.setState({ 'city': el.description });
+                                const locationDetails = await fetchDetails(el.place_id);
+                                console.log(locationDetails);
+                                this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
+                              }} key={el.id}>
+                                <LocationItem 
+                                  {...el}
+                                />
+                              </TouchableOpacity>
+                            ))}
+                          </ScrollView>
+                          
+                          <Button
+                            title='close'
+                            onPress={this.closeModal}
                           />
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                  </ React.Fragment>
-                )}
-              </GoogleAutoComplete>
+
+                          
+                        </View>
+                      </ImageBackground>
+                    </ React.Fragment>
+                  )}
+                </GoogleAutoComplete>
             </Modal>
       
             <Text style={styles.cardTitle}>{this.state.city}</Text>
@@ -173,10 +182,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   inputField: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: 'blue',
-    paddingHorizontal: 16,
-    marginTop: 60,
+    position: 'absolute',
+    top: 142,
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+    width: 230,
+    height: 40,
+    fontFamily: 'nunito-regular',
+    color: '#494949',
+    fontSize: 13,
+    lineHeight: 16,
+    paddingHorizontal: 12
+  },
+  image: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  searchResultContainer: {
+    width: 230,
+    position: 'absolute',
+    top: 218,
+    backgroundColor: 'rgba(255, 255, 255, 0.75)'
   }
 });
