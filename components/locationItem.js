@@ -7,7 +7,6 @@ export default class LocationItem extends PureComponent{
     return (
       <View style={styles.root}>
         <Text style={styles.text}>{this.props.description}</Text>
-        <View style={styles.bottomLine}></View>
       </View>
     )
   }
@@ -26,12 +25,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: 'normal',
     paddingLeft: 12,
-    alignSelf: 'flex-start'
-  },
-  bottomLine: {
-    width: 206,
-    height: 0,
-    borderBottomWidth: 0.5,
-    marginTop: 10,
+    alignSelf: 'flex-start',
   }
 })

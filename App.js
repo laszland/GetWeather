@@ -9,7 +9,8 @@ const getFont = () => Font.loadAsync({
   'nunito-extralight': require('./assets/fonts/Nunito-ExtraLight.ttf'),
   'nunito-extralight-italic': require('./assets/fonts/Nunito-ExtraLightItalic.ttf'),
   'nunito-italic': require('./assets/fonts/Nunito-Italic.ttf'),
-  'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf')
+  'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
+  'nunito-extrabold': require('./assets/fonts/Nunito-ExtraBold.ttf')
 })
 
 export default function App() {

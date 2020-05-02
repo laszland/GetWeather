@@ -10,10 +10,13 @@ import { StyleSheet,
          TextInput,
          AsyncStorage,
          ScrollView,
-         ImageBackground } from 'react-native';
+         ImageBackground,
+         TouchableWithoutFeedback,
+         Keyboard } from 'react-native';
 import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import LocationItem from '../components/locationItem';
 import { getWeatherData } from '../services/weatherData';
+import CustomButton from '../components/button';
 
 
 export default class Home extends React.Component {
@@ -86,13 +89,14 @@ export default class Home extends React.Component {
             />
       
             <Modal visible={this.state.modalOpen}>
-                <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
-                                    debounce={500}
-                                    minLength={3}
-                                    queryTypes='(cities)'
-                                    >
-                  {({ handleTextChange, locationResults, fetchDetails }) => (
-                    <React.Fragment>
+              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
+                                  debounce={500}
+                                  minLength={3}
+                                  queryTypes='(cities)'
+                                  >
+                {({ handleTextChange, locationResults, fetchDetails }) => (
+                  <React.Fragment>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                       <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
                         <TextInput
                           placeholder='type your location'
@@ -104,7 +108,6 @@ export default class Home extends React.Component {
                           style={styles.inputField}
                           value={this.state.city}
                         />
-
                         <View style={styles.searchResultContainer}>
                           <ScrollView>
                             {locationResults.map(el => (
@@ -120,18 +123,18 @@ export default class Home extends React.Component {
                               </TouchableOpacity>
                             ))}
                           </ScrollView>
-                          
-                          <Button
-                            title='close'
+                        </View>
+                        <View style={styles.modalSaveButton}>
+                          <CustomButton
+                            title='save'
                             onPress={this.closeModal}
                           />
-
-                          
                         </View>
                       </ImageBackground>
-                    </ React.Fragment>
-                  )}
-                </GoogleAutoComplete>
+                    </TouchableWithoutFeedback>
+                  </ React.Fragment>
+                )}
+              </GoogleAutoComplete>
             </Modal>
       
             <Text style={styles.cardTitle}>{this.state.city}</Text>
@@ -204,5 +207,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 218,
     backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  modalSaveButton: {
+    position: 'absolute',
+    top: 500
   }
 });
