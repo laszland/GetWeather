@@ -58,6 +58,7 @@ export default class Home extends React.Component {
     } catch(err) {
       console.error(err);
     }
+    console.log(this.state);
   };
   
   
@@ -142,6 +143,20 @@ export default class Home extends React.Component {
                 <Text style={styles.cardTitle}>{this.state.city}</Text>
                 <Image source={require('../assets/icons/draw.png')} style={styles.icon}/>
               </TouchableOpacity>
+
+              <View>
+                <Text>
+                  { this.state.weatherData.current.temp }
+                </Text>
+                <View>
+                  <View>
+                    { /* weather icon */}
+                    <Image />
+                    <Text>{/* weather description */}</Text>
+                  </View>
+                </View>
+              </View>
+
         
               <FlatList
                 data={this.state.data}
