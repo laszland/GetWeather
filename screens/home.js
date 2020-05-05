@@ -12,7 +12,8 @@ import { StyleSheet,
          ScrollView,
          ImageBackground,
          TouchableWithoutFeedback,
-         Keyboard } from 'react-native';
+         Keyboard,
+         Image } from 'react-native';
 import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import LocationItem from '../components/locationItem';
 import { getWeatherData } from '../services/weatherData';
@@ -42,7 +43,6 @@ export default class Home extends React.Component {
     getWeatherData(this.state.lat, this.state.lng)
       .then(data => {
         this.setState({ weatherData: data })
-        console.log(this.state);
       });
   }
   
@@ -82,82 +82,82 @@ export default class Home extends React.Component {
   render() {
     
     return (
-          <View style={styles.homeContainer}>
-      
-            <Button
-              title='open'
-              onPress={this.openModal}
-            />
-      
-            <Modal visible={this.state.modalOpen}>
-              <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
-                                  debounce={500}
-                                  minLength={3}
-                                  queryTypes='(cities)'
-                                  >
-                {({ handleTextChange, locationResults, fetchDetails, clearSearch }) => (
-                  <React.Fragment>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                      <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
-                        <Header />
-                        <View style={styles.inputContainer}>
-                          <TextInput
-                            placeholder='type your location'
-                            onChangeText={text => {
-                              this.setState({'city': text}),
-                              handleTextChange(text)
-                            }}
-                            defaultValue={this.state.city}
-                            style={styles.inputField}
-                            value={this.state.city}
-                          />
-                          <View style={styles.modalButton}>
-                            <CustomButton
-                              title='save'
-                              onPress={this.closeModal}
+          <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={styles.image}>
+            <View style={styles.homeContainer}>
+              <Header />
+        
+              <Modal visible={this.state.modalOpen}>
+                <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
+                                    debounce={500}
+                                    minLength={3}
+                                    queryTypes='(cities)'
+                                    >
+                  {({ handleTextChange, locationResults, fetchDetails, clearSearch }) => (
+                    <React.Fragment>
+                      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
+                          <Header />
+                          <View style={styles.inputContainer}>
+                            <TextInput
+                              placeholder='type your location'
+                              onChangeText={text => {
+                                this.setState({'city': text}),
+                                handleTextChange(text)
+                              }}
+                              defaultValue={this.state.city}
+                              style={styles.inputField}
+                              value={this.state.city}
                             />
+                            <View style={styles.modalButton}>
+                              <CustomButton
+                                title='save'
+                                onPress={this.closeModal}
+                              />
+                            </View>
                           </View>
-                        </View>
-                        <View style={styles.searchResultContainer}>
-                          <ScrollView>
-                            {locationResults.map(el => (
-                              <TouchableOpacity onPress={async () => {
-                                this.setState({ 'city': el.description });
-                                const locationDetails = await fetchDetails(el.place_id);
-                                this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
-                                clearSearch();
-                              }} key={el.id}>
-                                <LocationItem 
-                                  {...el}
-                                />
-                              </TouchableOpacity>
-                            ))}
-                          </ScrollView>
-                        </View>
-                      </ImageBackground>
-                    </TouchableWithoutFeedback>
-                  </ React.Fragment>
+                          <View style={styles.searchResultContainer}>
+                            <ScrollView>
+                              {locationResults.map(el => (
+                                <TouchableOpacity onPress={async () => {
+                                  this.setState({ 'city': el.description });
+                                  const locationDetails = await fetchDetails(el.place_id);
+                                  this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
+                                  clearSearch();
+                                }} key={el.id}>
+                                  <LocationItem 
+                                    {...el}
+                                  />
+                                </TouchableOpacity>
+                              ))}
+                            </ScrollView>
+                          </View>
+                        </ImageBackground>
+                      </TouchableWithoutFeedback>
+                    </ React.Fragment>
+                  )}
+                </GoogleAutoComplete>
+              </Modal>
+        
+              <TouchableOpacity style={styles.city} onPress={this.openModal}>
+                <Text style={styles.cardTitle}>{this.state.city}</Text>
+                <Image source={require('../assets/icons/draw.png')} style={styles.icon}/>
+              </TouchableOpacity>
+        
+              <FlatList
+                data={this.state.data}
+                style={styles.list}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('DayDetails', item)}>
+                    <View style={styles.cardContent}>
+                      <Text style={styles.cardTitle}>{item.day}</Text>
+                      <Text>{item.temp} ºC</Text>
+                      <Text>{item.description}</Text>
+                    </View>
+                  </TouchableOpacity >
                 )}
-              </GoogleAutoComplete>
-            </Modal>
-      
-            <Text style={styles.cardTitle}>{this.state.city}</Text>
-            <Text style={styles.cardTitle}> coordinates: {this.state.lat}; {this.state.lng} </Text>
-      
-            <FlatList
-              data={this.state.data}
-              style={styles.list}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('DayDetails', item)}>
-                  <View style={styles.cardContent}>
-                    <Text style={styles.cardTitle}>{item.day}</Text>
-                    <Text>{item.temp} ºC</Text>
-                    <Text>{item.description}</Text>
-                  </View>
-                </TouchableOpacity >
-              )}
-            />
-          </View>
+              />
+            </View>
+          </ImageBackground>
       )
     }
 }
@@ -177,8 +177,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold'
+    fontFamily: 'nunito-extralight',
+    fontWeight: '200',
+    fontSize: 14,
+    lineHeight: 19,
+    color: '#FFFFFF',
+    paddingLeft: 12,
+    paddingRight: 10
   },
   inputContainer: {
     flex: 1,
@@ -211,6 +216,21 @@ const styles = StyleSheet.create({
   },
   searchResultContainer: {
     width: 230,
+    position: 'absolute',
+    top: 228,
     backgroundColor: 'rgba(255, 255, 255, 0.75)'
+  },
+  homeContainer: {
+    flex: 1,
+    width: '100%',
+  },
+  icon: {
+    width: 14,
+    height: 14,
+  },
+  city: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 });

@@ -6,6 +6,10 @@ import DayDetails from '../screens/dayDetails';
 const screens = {
   Home: {
     screen: Home,
+    navigationOptions: {
+      title: 'Home',
+      headerShown: false
+    }
   },
   DayDetails: {
     screen: DayDetails

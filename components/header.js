@@ -11,9 +11,8 @@ export default function Header() {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0
+    width: '100%',
+    justifyContent: 'flex-start'
   },
   headerText: {
     paddingTop: 12,
