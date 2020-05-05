@@ -17,6 +17,7 @@ import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import LocationItem from '../components/locationItem';
 import { getWeatherData } from '../services/weatherData';
 import CustomButton from '../components/button';
+import Header from '../components/header'
 
 
 export default class Home extends React.Component {
@@ -94,28 +95,37 @@ export default class Home extends React.Component {
                                   minLength={3}
                                   queryTypes='(cities)'
                                   >
-                {({ handleTextChange, locationResults, fetchDetails }) => (
+                {({ handleTextChange, locationResults, fetchDetails, clearSearch }) => (
                   <React.Fragment>
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                       <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
-                        <TextInput
-                          placeholder='type your location'
-                          onChangeText={text => {
-                            this.setState({'city': text}),
-                            handleTextChange(text)
-                          }}
-                          defaultValue={this.state.city}
-                          style={styles.inputField}
-                          value={this.state.city}
-                        />
+                        <Header />
+                        <View style={styles.inputContainer}>
+                          <TextInput
+                            placeholder='type your location'
+                            onChangeText={text => {
+                              this.setState({'city': text}),
+                              handleTextChange(text)
+                            }}
+                            defaultValue={this.state.city}
+                            style={styles.inputField}
+                            value={this.state.city}
+                          />
+                          <View style={styles.modalButton}>
+                            <CustomButton
+                              title='save'
+                              onPress={this.closeModal}
+                            />
+                          </View>
+                        </View>
                         <View style={styles.searchResultContainer}>
                           <ScrollView>
                             {locationResults.map(el => (
                               <TouchableOpacity onPress={async () => {
                                 this.setState({ 'city': el.description });
                                 const locationDetails = await fetchDetails(el.place_id);
-                                console.log(locationDetails);
                                 this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
+                                clearSearch();
                               }} key={el.id}>
                                 <LocationItem 
                                   {...el}
@@ -123,12 +133,6 @@ export default class Home extends React.Component {
                               </TouchableOpacity>
                             ))}
                           </ScrollView>
-                        </View>
-                        <View style={styles.modalSaveButton}>
-                          <CustomButton
-                            title='save'
-                            onPress={this.closeModal}
-                          />
                         </View>
                       </ImageBackground>
                     </TouchableWithoutFeedback>
@@ -159,14 +163,6 @@ export default class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  homeContainer: {
-    flex: 1,
-    width: Dimensions.get('screen').width,
-    paddingLeft: 20,
-  },
-  homeText: {
-    fontWeight: 'bold'
-  },
   list: {
     flex: 1
   },
@@ -183,6 +179,17 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontWeight: 'bold'
+  },
+  inputContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    backgroundColor: 'pink'
+  },
+  modalButton: {
+    position: 'absolute',
+    top: 192,
+    marginBottom: 12
   },
   inputField: {
     position: 'absolute',
@@ -204,12 +211,6 @@ const styles = StyleSheet.create({
   },
   searchResultContainer: {
     width: 230,
-    position: 'absolute',
-    top: 218,
     backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
-  modalSaveButton: {
-    position: 'absolute',
-    top: 500
-  }
 });
