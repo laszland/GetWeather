@@ -186,19 +186,15 @@ const styles = StyleSheet.create({
     paddingRight: 10
   },
   inputContainer: {
-    flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'pink'
   },
   modalButton: {
-    position: 'absolute',
-    top: 192,
+    marginTop: 12,
     marginBottom: 12
   },
   inputField: {
-    position: 'absolute',
-    top: 142,
+    marginTop: 142,
     backgroundColor: 'rgba(255, 255, 255, 0.75)',
     width: 230,
     height: 40,
@@ -211,13 +207,11 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: 'cover',
-    justifyContent: 'center',
     alignItems: 'center'
   },
   searchResultContainer: {
     width: 230,
-    position: 'absolute',
-    top: 228,
+    marginTop: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   homeContainer: {
