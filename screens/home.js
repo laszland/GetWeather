@@ -37,13 +37,18 @@ export default class Home extends React.Component {
       lat: 0,
       lng: 0,
       modalOpen: false,
-      weatherData: {}
+      current: {},
+      hourly: [],
+      daily: [],
     }
     this.getCityAndCoordinates()
     getWeatherData(this.state.lat, this.state.lng)
       .then(data => {
-        this.setState({ weatherData: data })
-      });
+        this.setState({ current: data.current,
+                        hourly: data.hourly,
+                        daily: data.daily })
+      }
+    );
   }
   
   
@@ -54,11 +59,14 @@ export default class Home extends React.Component {
     try {
       await AsyncStorage.multiSet([city, lat, lng]);
       const weatherData = await getWeatherData(this.state.lat, this.state.lng);
-      this.setState({ modalOpen: false, weatherData });
+      this.setState({ modalOpen: false,
+                      current: weatherData.current,
+                      hourly: weatherData.hourly,
+                      daily: weatherData.daily});
     } catch(err) {
       console.error(err);
     }
-    console.log(this.state);
+    //console.log(this.state);
   };
   
   
@@ -81,6 +89,9 @@ export default class Home extends React.Component {
 
   
   render() {
+    console.log('this is the actual state', this.state)
+    const { current: { weather }} = this.state;
+    console.log('weather data:', weather);
     
     return (
           <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={styles.image}>
@@ -144,20 +155,6 @@ export default class Home extends React.Component {
                 <Image source={require('../assets/icons/draw.png')} style={styles.icon}/>
               </TouchableOpacity>
 
-              <View>
-                <Text>
-                  { this.state.weatherData.current.temp }
-                </Text>
-                <View>
-                  <View>
-                    { /* weather icon */}
-                    <Image />
-                    <Text>{/* weather description */}</Text>
-                  </View>
-                </View>
-              </View>
-
-        
               <FlatList
                 data={this.state.data}
                 style={styles.list}
