@@ -41,14 +41,7 @@ export default class Home extends React.Component {
       hourly: [],
       daily: [],
     }
-    this.getCityAndCoordinates()
-    getWeatherData(this.state.lat, this.state.lng)
-      .then(data => {
-        this.setState({ current: data.current,
-                        hourly: data.hourly,
-                        daily: data.daily })
-      }
-    );
+    this.updateState();
   }
   
   
@@ -66,15 +59,18 @@ export default class Home extends React.Component {
     } catch(err) {
       console.error(err);
     }
-    //console.log(this.state);
   };
   
   
-  getCityAndCoordinates = async () => {
+  updateState = async () => {
     try {
       const value = await AsyncStorage.multiGet(['city', 'lat', 'lng']);
       if (value !== null) {
         this.setState({ city: value[0][1], lat: parseFloat(value[1][1]), lng: parseFloat(value[2][1]) });
+        const weatherData = await getWeatherData(this.state.lat, this.state.lng);
+        this.setState({ current: weatherData.current,
+                        hourly: weatherData.hourly,
+                        daily: weatherData.daily });
       } else {
         this.setState({ modalOpen: true })
       }
@@ -89,9 +85,6 @@ export default class Home extends React.Component {
 
   
   render() {
-    console.log('this is the actual state', this.state)
-    const { current: { weather }} = this.state;
-    console.log('weather data:', weather);
     
     return (
           <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={styles.image}>
@@ -154,6 +147,13 @@ export default class Home extends React.Component {
                 <Text style={styles.cardTitle}>{this.state.city}</Text>
                 <Image source={require('../assets/icons/draw.png')} style={styles.icon}/>
               </TouchableOpacity>
+
+              <View>
+                <Text>{this.state.current.temp}</Text>
+                <View>
+                  <Text></Text>
+                </View>
+              </View>
 
               <FlatList
                 data={this.state.data}
