@@ -1,3 +1,20 @@
 export const icons = {
-  '01d': 
+  '01d': require('../assets/icons/weather/01d.png'),
+  '01n': require('../assets/icons/weather/01n.png'),
+  '02d': require('../assets/icons/weather/0203d.png'),
+  '02n': require('../assets/icons/weather/0203n.png'),
+  '03d': require('../assets/icons/weather/0203d.png'),
+  '03n': require('../assets/icons/weather/0203n.png'),
+  '04d': require('../assets/icons/weather/04d.png'),
+  '04n': require('../assets/icons/weather/04n.png'),
+  '09d': require('../assets/icons/weather/09dn.png'),
+  '09n': require('../assets/icons/weather/09dn.png'),
+  '10d': require('../assets/icons/weather/10dn.png'),
+  '10n': require('../assets/icons/weather/10dn.png'),
+  '11d': require('../assets/icons/weather/11dn.png'),
+  '11n': require('../assets/icons/weather/11dn.png'),
+  '13d': require('../assets/icons/weather/13dn.png'),
+  '13n': require('../assets/icons/weather/13dn.png'),
+  '50d': require('../assets/icons/weather/50d.png'),
+  '50n': require('../assets/icons/weather/50n.png'),
 }

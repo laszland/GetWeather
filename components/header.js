@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start'
   },
   headerText: {
-    paddingTop: 12,
+    paddingTop: 20,
     paddingLeft: 12,
     fontFamily: 'nunito-extralight',
     fontSize: 36,

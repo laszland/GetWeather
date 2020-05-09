@@ -5,21 +5,14 @@ import { StyleSheet,
          Dimensions,
          FlatList,
          TouchableOpacity,
-         Modal,
-         Button,
-         TextInput,
          AsyncStorage,
-         ScrollView,
          ImageBackground,
-         TouchableWithoutFeedback,
-         Keyboard,
          Image } from 'react-native';
-import { GoogleAutoComplete } from 'react-native-google-autocomplete';
-import LocationItem from '../components/locationItem';
 import { getWeatherData } from '../services/weatherData';
-import CustomButton from '../components/button';
 import Header from '../components/header'
 const moment = require('moment')
+import { icons } from '../routes/iconRoutes';
+import LocationModal from '../components/locationModal'
 
 
 export default class Home extends React.Component {
@@ -27,13 +20,6 @@ export default class Home extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      data: [
-        { day: 'monday', temp: 21, description: 'cloudy', key: '1' },
-        { day: 'thuesday', temp: 22, description: 'sunny', key: '2' },
-        { day: 'wednesday', temp: 22, description: 'sunny', key: '3' },
-        { day: 'thursday', temp: 19, description: 'cloudy', key: '4' },
-        { day: 'friday', temp: 18, description: 'rainy', key: '5' }
-      ],
       city: '',
       lat: 0,
       lng: 0,
@@ -82,6 +68,14 @@ export default class Home extends React.Component {
     this.setState({ modalOpen: true })
   }
 
+  setCity = (text) => {
+    this.setState({ city: text })
+  }
+
+  setCoordinates = (lat, lng) => {
+    this.setState({ lat, lng});
+  }
+
   componentDidMount() {
     this.updateState();
   }
@@ -93,57 +87,13 @@ export default class Home extends React.Component {
             <View style={styles.homeContainer}>
               <Header />
         
-              <Modal visible={this.state.modalOpen}>
-                <GoogleAutoComplete apiKey='AIzaSyD_ImLpIpgxe59dO5YInbCYjf9as1lk8rs' // ! TODO: hide api_key
-                                    debounce={500}
-                                    minLength={3}
-                                    queryTypes='(cities)'
-                                    >
-                  {({ handleTextChange, locationResults, fetchDetails, clearSearch }) => (
-                    <React.Fragment>
-                      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
-                          <Header />
-                          <View style={styles.inputContainer}>
-                            <TextInput
-                              placeholder='type your location'
-                              onChangeText={text => {
-                                this.setState({'city': text}),
-                                handleTextChange(text)
-                              }}
-                              defaultValue={this.state.city}
-                              style={styles.inputField}
-                              value={this.state.city}
-                            />
-                            <View style={styles.modalButton}>
-                              <CustomButton
-                                title='save'
-                                onPress={this.closeModal}
-                              />
-                            </View>
-                          </View>
-                          <View style={styles.searchResultContainer}>
-                            <ScrollView>
-                              {locationResults.map(el => (
-                                <TouchableOpacity onPress={async () => {
-                                  this.setState({ 'city': el.description });
-                                  const locationDetails = await fetchDetails(el.place_id);
-                                  this.setState({ lat: locationDetails.geometry.location.lat, lng: locationDetails.geometry.location.lng })
-                                  clearSearch();
-                                }} key={el.id}>
-                                  <LocationItem 
-                                    {...el}
-                                  />
-                                </TouchableOpacity>
-                              ))}
-                            </ScrollView>
-                          </View>
-                        </ImageBackground>
-                      </TouchableWithoutFeedback>
-                    </ React.Fragment>
-                  )}
-                </GoogleAutoComplete>
-              </Modal>
+              <LocationModal
+                modalOpen={this.state.modalOpen}
+                city={this.state.city}
+                closeModal={this.closeModal}
+                setCity={this.setCity}
+                setCoordinates={this.setCoordinates}
+              />
         
               <TouchableOpacity style={styles.city} onPress={this.openModal}>
                 <Text style={styles.cardTitle}>{this.state.city}</Text>
@@ -163,13 +113,14 @@ export default class Home extends React.Component {
                 style={styles.list}
                 keyExtractor={item => item.dt.toString()}
                 renderItem={({ item }) => {
-                  const day = moment.unix(item.dt).format('dd')
+                  const day = moment.unix(item.dt).format('dd');
+                  const icon = item.weather[0].icon;
                   return (
                     <View >
                       <View style={styles.cardContent}>
                         <Text style={styles.cardDay}>{day}</Text>
-                        <Text style={styles.cardTemp}>{parseInt(item.temp.min)}/{parseInt(item.temp.max)} ºC</Text>
-                        <Text style={styles.cardTitle}>{item.weather[0].icon}</Text>
+                        <Text style={styles.cardTemp}>{parseInt(item.temp.min)}º / {parseInt(item.temp.max)}º</Text>
+                        <Image source={icons[icon]} style={styles.cardIcon}/>
                       </View>
                     </View >
                 )
@@ -194,7 +145,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'rgba(24, 100, 105, 0.5)',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    borderRadius: 4
   },
   cardTitle: {
     fontFamily: 'nunito-extralight',
@@ -205,34 +157,10 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 10
   },
-  inputContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  modalButton: {
-    marginTop: 12,
-    marginBottom: 12
-  },
-  inputField: {
-    marginTop: 142,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-    width: 230,
-    height: 40,
-    fontFamily: 'nunito-regular',
-    color: '#494949',
-    fontSize: 13,
-    lineHeight: 16,
-    paddingHorizontal: 12
-  },
   image: {
     flex: 1,
     resizeMode: 'cover',
     alignItems: 'center'
-  },
-  searchResultContainer: {
-    width: 230,
-    marginTop: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.75)'
   },
   homeContainer: {
     flex: 1,
@@ -251,10 +179,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 130,
     width: Dimensions.get('window').width-24,
-    backgroundColor: 'rgba(24, 100, 105, 0.5)',
+    backgroundColor: 'rgba(24, 100, 105, 0.9)',
     marginTop: 30,
     padding: 0,
     alignSelf: 'center',
+    borderRadius: 4,
   },
   currentWeatherTemp: {
     fontFamily: 'nunito-extralight',
@@ -263,7 +192,8 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     textAlignVertical: 'center',
     lineHeight: 130,
-    paddingLeft: 12
+    paddingLeft: 12,
+    //backgroundColor: 'pink'
   },
   iconAndTextContainer: {
     flex: 1,
@@ -283,15 +213,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF'
   },
   cardDay: {
-    fontFamily: 'nunito-extralight',
+    fontFamily: 'nunito-bold',
     fontSize: 30,
     color: '#FFFFFF',
     textAlign: 'left',
-    paddingLeft: 12,
+    paddingLeft: 20,
   },
   cardTemp: {
     fontFamily: 'nunito-extralight',
-    fontSize: 45,
+    fontSize: 25,
     color: '#FFFFFF',
+  },
+  cardIcon: {
+    width: 40,
+    height: 40,
+    marginRight: 20,
   },
 });
