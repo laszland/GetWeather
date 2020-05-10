@@ -13,6 +13,7 @@ import { GoogleAutoComplete } from 'react-native-google-autocomplete';
 import Header from '../components/header';
 import CustomButton from '../components/button';
 import LocationItem from '../components/locationItem';
+import { globalStyles } from '../styles/global'
 
 
 
@@ -27,7 +28,7 @@ export default function LocationModal({ modalOpen, city, closeModal, setCity, se
                   {({ handleTextChange, locationResults, fetchDetails, clearSearch }) => (
                     <React.Fragment>
                       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                        <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={styles.image}>
+                        <ImageBackground source={require("../assets/backgrounds/location-select.jpg")} style={globalStyles.image}>
                           <Header />
                           <View style={styles.inputContainer}>
                             <TextInput
@@ -95,10 +96,5 @@ const styles = StyleSheet.create({
     width: 230,
     marginTop: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.75)'
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-    alignItems: 'center'
   },
 })

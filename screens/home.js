@@ -14,6 +14,7 @@ const moment = require('moment')
 import { icons } from '../routes/iconRoutes';
 import LocationModal from '../components/locationModal';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { globalStyles } from '../styles/global'
 
 
 export default class Home extends React.Component {
@@ -86,7 +87,7 @@ export default class Home extends React.Component {
   render() {
 
     return (
-          <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={styles.image}>
+          <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={globalStyles.image}>
             <View style={styles.homeContainer}>
               <Header />
         
@@ -108,7 +109,10 @@ export default class Home extends React.Component {
                 <Image source={require('../assets/icons/draw.png')} style={styles.icon}/>
               </TouchableOpacity>
               
-              <TouchableOpacity style={styles.currentWeatherContainer}>
+              <TouchableOpacity
+                style={styles.currentWeatherContainer}
+                onPress={() => this.props.navigation.navigate('DayDetails', this.state)}
+              >
                 <Text style={styles.currentWeatherTemp}>{ parseInt(this.state.current.temp) || '--'}º</Text>
                 <View style={styles.iconAndTextContainer}>
                   <Image source={require('../assets/icons/weather/01d.png')} style={styles.iconBig}/>
@@ -164,11 +168,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     paddingLeft: 12,
     paddingRight: 10
-  },
-  image: {
-    flex: 1,
-    resizeMode: 'cover',
-    alignItems: 'center'
   },
   homeContainer: {
     flex: 1,

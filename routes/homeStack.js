@@ -12,7 +12,11 @@ const screens = {
     }
   },
   DayDetails: {
-    screen: DayDetails
+    screen: DayDetails,
+    navigationOptions: {
+      title: 'DayDetails',
+      headerShown: false
+    }
   }
 };
 
