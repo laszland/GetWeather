@@ -12,7 +12,8 @@ import { getWeatherData } from '../services/weatherData';
 import Header from '../components/header'
 const moment = require('moment')
 import { icons } from '../routes/iconRoutes';
-import LocationModal from '../components/locationModal'
+import LocationModal from '../components/locationModal';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 
 export default class Home extends React.Component {
@@ -27,6 +28,7 @@ export default class Home extends React.Component {
       current: {},
       hourly: [],
       daily: [],
+      spinner: true
     }
   }
   
@@ -55,7 +57,8 @@ export default class Home extends React.Component {
         const weatherData = await getWeatherData(this.state.lat, this.state.lng);
         this.setState({ current: weatherData.current,
                         hourly: weatherData.hourly,
-                        daily: weatherData.daily });
+                        daily: weatherData.daily,
+                        spinner: false});
       } else {
         this.setState({ modalOpen: true })
       }
@@ -94,6 +97,11 @@ export default class Home extends React.Component {
                 setCity={this.setCity}
                 setCoordinates={this.setCoordinates}
               />
+
+              <Spinner 
+                visible={this.state.spinner}
+                animation='fade'
+              />
         
               <TouchableOpacity style={styles.city} onPress={this.openModal}>
                 <Text style={styles.cardTitle}>{this.state.city}</Text>
@@ -101,7 +109,7 @@ export default class Home extends React.Component {
               </TouchableOpacity>
               
               <TouchableOpacity style={styles.currentWeatherContainer}>
-                <Text style={styles.currentWeatherTemp}>{ parseInt(this.state.current.temp) }º</Text>
+                <Text style={styles.currentWeatherTemp}>{ parseInt(this.state.current.temp) || '--'}º</Text>
                 <View style={styles.iconAndTextContainer}>
                   <Image source={require('../assets/icons/weather/01d.png')} style={styles.iconBig}/>
                   <Text style={styles.currentDescription}>sunny</Text>
