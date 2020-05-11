@@ -4,7 +4,6 @@ export const globalStyles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: 'cover',
-    //alignItems: 'center'
   },
   cardDay: {
     fontFamily: 'nunito-bold',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ImageBackground, Image, TouchableOpacity, Dimensions, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ImageBackground, Image, TouchableOpacity, Dimensions, ScrollView, FlatList } from 'react-native';
 import { globalStyles } from '../styles/global';
 import { LineChart } from 'react-native-chart-kit'
 import moment from 'moment'
@@ -11,74 +11,80 @@ export default function DayDetails({ navigation }) {
 
   const labels = [];
   const dataSet = [];
+  const hourly24 = [];
+
 
   for (let i = 0; i < 24; i+=3) {
     labels.push(moment.unix(hourly[i].dt).format('H:mm'));
     dataSet.push(parseInt(hourly[i].temp));
+    hourly24.push(hourly[i]);
   }
+
+  const Item = ({ item }) => {
+    const hour = moment.unix(item.dt).format('H:mm');
+    const temp = parseInt(item.temp);
+    const icon = item.weather[0].icon;
+    return (
+      <View style={{...globalStyles.cardContent, ...styles.itemContainer}}>
+        <Text style={globalStyles.cardDay}>{ hour }</Text>
+        <Text style={globalStyles.cardTemp}>{ temp }°</Text>
+        <Image source={icons[icon]} style={globalStyles.cardIcon}/>
+      </View>
+    )
+  };
 
   return (
     <ImageBackground source={require('../assets/backgrounds/details.jpg')} style={globalStyles.image}>
-      <ScrollView>
-
-        <TouchableOpacity onPress={() => navigation.pop()} style={styles.backIconContainer}>
-          <Image source={require('../assets/icons/return.png')} style={styles.icon}/>
-        </TouchableOpacity>
-        <LineChart
-        data={{
-          labels: labels,
-          datasets: [
-            {
-              data: dataSet
-            }
-          ]
-        }}
-        width={Dimensions.get('window').width-24}
-        height={300}
-        withInnerLines={true}
-        withOuterLines={false}
-        fromZero={true}
-        yAxisSuffix={'°'}
-        yLabelsOffset={5}
-        xLabelsOffset={0}
-        bezier
-        verticalLabelRotation={45}
-        chartConfig={{
-          backgroundGradientFromOpacity: 0,
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-            backgroundColor: 'rgba(255, 255, 255, 0)',
-          },
-          propsForDots: {
-            r: 2
-          },
-        }}
-        />
-
-        <View>
-
-          <FlatList 
-            data={hourly}
-            keyExtractor={item => item.dt.toString()}
-            style={styles.detailsContainer}
-            renderItem={({ item }) => {
-              const hour = moment.unix(item.dt).format('H:mm');
-              const temp = parseInt(item.temp);
-              const icon = item.weather[0].icon;
-              return (
-                <View style={globalStyles.cardContent}>
-                  <Text style={globalStyles.cardDay}>{ hour }</Text>
-                  <Text style={globalStyles.cardTemp}>{ temp }°</Text>
-                  <Image source={icons[icon]} style={globalStyles.cardIcon}/>
-                </View>
-              )
-            }}
+      <View>
+        <ScrollView>
+          <TouchableOpacity onPress={() => navigation.pop()} style={styles.backIconContainer}>
+            <Image source={require('../assets/icons/return.png')} style={styles.icon}/>
+          </TouchableOpacity>
+          <LineChart
+          data={{
+            labels: labels,
+            datasets: [
+              {
+                data: dataSet
+              }
+            ]
+          }}
+          width={Dimensions.get('window').width-24}
+          height={300}
+          withInnerLines={true}
+          withOuterLines={false}
+          fromZero={true}
+          yAxisSuffix={'°'}
+          yLabelsOffset={5}
+          xLabelsOffset={0}
+          bezier
+          verticalLabelRotation={45}
+          renderDotContent={({x, y, index}) => <Text key={index} style={{position: 'absolute', top: y, left: x, color: '#FFFFFF'}}>{y}°</Text>}
+          chartConfig={{
+            backgroundGradientFromOpacity: 0,
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
+              backgroundColor: 'rgba(255, 255, 255, 0)',
+            },
+            propsForDots: {
+              r: 2
+            },
+          }}
           />
-        </View>
-      </ScrollView>
+
+          <View>
+            <FlatList
+              data={hourly24}
+              keyExtractor={item => item.dt.toString()}
+              style={styles.detailsContainer}
+              renderItem={({ item }) => <Item item={item}/>}
+            />
+          </View>
+        </ScrollView>
+      </View>
     </ImageBackground>
   )
 }
@@ -118,5 +124,8 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'space-around',
     marginTop: 10
+  },
+  itemContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)'
   }
 });
