@@ -129,9 +129,9 @@ export default class Home extends React.Component {
                   const icon = item.weather[0].icon;
                   return (
                     <View >
-                      <View style={styles.cardContent}>
-                        <Text style={styles.cardDay}>{day}</Text>
-                        <Text style={styles.cardTemp}>{parseInt(item.temp.min)}º / {parseInt(item.temp.max)}º</Text>
+                      <View style={globalStyles.cardContent}>
+                        <Text style={globalStyles.cardDay}>{day}</Text>
+                        <Text style={globalStyles.cardTemp}>{parseInt(item.temp.min)}º / {parseInt(item.temp.max)}º</Text>
                         <Image source={icons[icon]} style={styles.cardIcon}/>
                       </View>
                     </View >
