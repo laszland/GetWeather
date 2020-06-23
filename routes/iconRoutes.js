@@ -16,5 +16,5 @@ export const icons = {
   '13d': require('../assets/icons/weather/13dn.png'),
   '13n': require('../assets/icons/weather/13dn.png'),
   '50d': require('../assets/icons/weather/50d.png'),
-  '50n': require('../assets/icons/weather/50n.png'),
-}
+  '50n': require('../assets/icons/weather/50n.png')
+};

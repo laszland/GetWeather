@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Navigator from './routes/homeStack';
 import * as Font from 'expo-font';
 import { AppLoading } from 'expo';
@@ -11,10 +11,9 @@ const getFont = () => Font.loadAsync({
   'nunito-italic': require('./assets/fonts/Nunito-Italic.ttf'),
   'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
   'nunito-extrabold': require('./assets/fonts/Nunito-ExtraBold.ttf')
-})
+});
 
-export default function App() {
-  
+export default function App () {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   if (fontsLoaded) {
@@ -25,18 +24,17 @@ export default function App() {
     );
   } else {
     return (
-      <AppLoading 
+      <AppLoading
         startAsync={getFont}
         onFinish={() => setFontsLoaded(true)}
       />
-    )
+    );
   }
-
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   }
 });

@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native';
 
-export default function Header() {
+export default function Header () {
   return (
     <View style={styles.headerContainer}>
       <Text style={styles.headerText}>C°ELZIUS</Text>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
     fontWeight: '200',
     color: '#FFFFFF'
   }
-})
+});

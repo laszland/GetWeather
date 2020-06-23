@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Button } from 'react-native';
 
-export default function CustomButton({ title, onPress })  {
+export default function CustomButton ({ title, onPress }) {
   return (
-    <TouchableOpacity onPress={ onPress } style={styles.buttonContainer}>
-      <Text style={styles.buttonTitle}>{ title.toUpperCase() }</Text>
+    <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
+      <Text style={styles.buttonTitle}>{title.toUpperCase()}</Text>
     </TouchableOpacity>
   );
 }

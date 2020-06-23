@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { StyleSheet,
          View,
          Text,
@@ -9,12 +9,12 @@ import { StyleSheet,
          ImageBackground,
          Image } from 'react-native';
 import { getWeatherData } from '../services/weatherData';
-import Header from '../components/header'
-const moment = require('moment')
+import Header from '../components/header';
+const moment = require('moment');
 import { icons } from '../routes/iconRoutes';
 import LocationModal from '../components/locationModal';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { globalStyles } from '../styles/global'
+import { globalStyles } from '../styles/global';
 
 
 export default class Home extends React.Component {
@@ -59,6 +59,8 @@ export default class Home extends React.Component {
         this.setState({ current: weatherData.current,
                         hourly: weatherData.hourly,
                         daily: weatherData.daily,
+                        description: weatherData.current.weather[0].description,
+                        icon: weatherData.current.weather[0].icon,
                         spinner: false});
       } else {
         this.setState({ modalOpen: true })
@@ -85,7 +87,6 @@ export default class Home extends React.Component {
   }
   
   render() {
-
     return (
           <ImageBackground source={require('../assets/backgrounds/weather-data.jpg')} style={globalStyles.image}>
             <View style={styles.homeContainer}>
@@ -115,8 +116,8 @@ export default class Home extends React.Component {
               >
                 <Text style={styles.currentWeatherTemp}>{ parseInt(this.state.current.temp) || '--'}º</Text>
                 <View style={styles.iconAndTextContainer}>
-                  <Image source={require('../assets/icons/weather/01d.png')} style={styles.iconBig}/>
-                  <Text style={styles.currentDescription}>sunny</Text>
+                  <Image source={icons[this.state.icon]} style={styles.iconBig}/>
+                  <Text style={styles.currentDescription}>{this.state.description}</Text>
                 </View>
               </TouchableOpacity>
 
@@ -200,14 +201,12 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     lineHeight: 130,
     paddingLeft: 12,
-    //backgroundColor: 'pink'
   },
   iconAndTextContainer: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'pink'
   },
   iconBig: {
     width: 60,
