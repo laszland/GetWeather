@@ -34,7 +34,7 @@ export default function DayDetails ({ navigation }) {
 
   return (
     <ImageBackground source={require('../assets/backgrounds/details.jpg')} style={globalStyles.image}>
-      <View >
+      <View>
         <ScrollView>
           <TouchableOpacity onPress={() => navigation.pop()} style={styles.backIconContainer}>
             <Image source={require('../assets/icons/return.png')} style={styles.icon} />
